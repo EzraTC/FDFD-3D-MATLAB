@@ -1,4 +1,3 @@
-
 % Initialize PML boundary condition
 %
 % This version fixes indexing/dimension mismatches and uses a consistent
@@ -71,15 +70,15 @@ if is_pml_xn
     sig_m_vec = (mu_0/eps_0) * sig_e_vec;        % impedance-scaled
 
     for ii = 1:n_pml_xn
-        i_eps = ii;             % eps_r_* arrays with size nxp1 on dim-1 use i=ii as well (we use slice(1,:) below)
-        i_mu_nx = ii;           % mu_r_yx/mu_r_zx have first dim nx
+        i_eps   = ii;   % eps_r_* arrays with size nxp1 on dim-1
+        i_mu_nx = ii;   % mu_r_yx/mu_r_zx have first dim nx
 
-        % eps components touched by x-normal PML
-        eps_r_yx(i_eps,:,:) = 1 + sig_e_vec(ii)/(1i*w*eps_0);   % [ny, nzp1]
-        eps_r_zx(i_eps,:,:) = 1 + sig_e_vec(ii)/(1i*w*eps_0);   % [nyp1, nz]
-        % mu components
-        mu_r_yx(i_mu_nx,:,:) = 1 + sig_m_vec(ii)/(1i*w*mu_0);   % [nyp1, nz]
-        mu_r_zx(i_mu_nx,:,:) = 1 + sig_m_vec(ii)/(1i*w*mu_0);   % [ny,   nzp1]
+        % eps components touched by x-normal PML (MULTIPLICATIVE UPDATE)
+        eps_r_yx(i_eps,:,:) = eps_r_yx(i_eps,:,:) .* (1 + sig_e_vec(ii)/(1i*w*eps_0)); % [ny, nzp1]
+        eps_r_zx(i_eps,:,:) = eps_r_zx(i_eps,:,:) .* (1 + sig_e_vec(ii)/(1i*w*eps_0)); % [nyp1, nz]
+        % mu components (MULTIPLICATIVE UPDATE)
+        mu_r_yx(i_mu_nx,:,:) = mu_r_yx(i_mu_nx,:,:) .* (1 + sig_m_vec(ii)/(1i*w*mu_0)); % [nyp1, nz]
+        mu_r_zx(i_mu_nx,:,:) = mu_r_zx(i_mu_nx,:,:) .* (1 + sig_m_vec(ii)/(1i*w*mu_0)); % [ny,   nzp1]
     end
 end
 
@@ -91,13 +90,13 @@ if is_pml_xp
     sig_m_vec = (mu_0/eps_0) * sig_e_vec;
 
     for ii = 1:n_pml_xp
-        i_eps = nxp1 - n_pml_xp + ii;    % eps_r_yx/eps_r_zx: first dim is nxp1
-        i_mu_nx = nx  - n_pml_xp + ii;   % mu_r_yx/mu_r_zx:  first dim is nx
+        i_eps   = nxp1 - n_pml_xp + ii;  % eps_r_yx/eps_r_zx: first dim is nxp1
+        i_mu_nx = nx   - n_pml_xp + ii;  % mu_r_yx/mu_r_zx:  first dim is nx
 
-        eps_r_yx(i_eps,:,:) = 1 + sig_e_vec(ii)/(1i*w*eps_0);
-        eps_r_zx(i_eps,:,:) = 1 + sig_e_vec(ii)/(1i*w*eps_0);
-        mu_r_yx(i_mu_nx,:,:) = 1 + sig_m_vec(ii)/(1i*w*mu_0);
-        mu_r_zx(i_mu_nx,:,:) = 1 + sig_m_vec(ii)/(1i*w*mu_0);
+        eps_r_yx(i_eps,:,:) = eps_r_yx(i_eps,:,:) .* (1 + sig_e_vec(ii)/(1i*w*eps_0));
+        eps_r_zx(i_eps,:,:) = eps_r_zx(i_eps,:,:) .* (1 + sig_e_vec(ii)/(1i*w*eps_0));
+        mu_r_yx(i_mu_nx,:,:) = mu_r_yx(i_mu_nx,:,:) .* (1 + sig_m_vec(ii)/(1i*w*mu_0));
+        mu_r_zx(i_mu_nx,:,:) = mu_r_zx(i_mu_nx,:,:) .* (1 + sig_m_vec(ii)/(1i*w*mu_0));
     end
 end
 
@@ -109,13 +108,13 @@ if is_pml_yn
     sig_m_vec = (mu_0/eps_0) * sig_e_vec;
 
     for jj = 1:n_pml_yn
-        j_nyp1 = jj;                     % for arrays with nyp1 on dim-2
-        j_ny   = jj;                     % for arrays with ny on dim-2
+        j_nyp1 = jj;                   % for arrays with nyp1 on dim-2
+        j_ny   = jj;                   % for arrays with ny on dim-2
 
-        eps_r_xy(:,j_nyp1,:) = 1 + sig_e_vec(jj)/(1i*w*eps_0);  % [nx, nzp1]
-        eps_r_zy(:,j_nyp1,:) = 1 + sig_e_vec(jj)/(1i*w*eps_0);  % [nxp1, nz]
-        mu_r_xy(:,j_ny,:)    = 1 + sig_m_vec(jj)/(1i*w*mu_0);   % [nxp1, nz]
-        mu_r_zy(:,j_ny,:)    = 1 + sig_m_vec(jj)/(1i*w*mu_0);   % [nx,   nzp1]
+        eps_r_xy(:,j_nyp1,:) = eps_r_xy(:,j_nyp1,:) .* (1 + sig_e_vec(jj)/(1i*w*eps_0)); % [nx, nzp1]
+        eps_r_zy(:,j_nyp1,:) = eps_r_zy(:,j_nyp1,:) .* (1 + sig_e_vec(jj)/(1i*w*eps_0)); % [nxp1, nz]
+        mu_r_xy(:,j_ny,:)    = mu_r_xy(:,j_ny,:)    .* (1 + sig_m_vec(jj)/(1i*w*mu_0));  % [nxp1, nz]
+        mu_r_zy(:,j_ny,:)    = mu_r_zy(:,j_ny,:)    .* (1 + sig_m_vec(jj)/(1i*w*mu_0));  % [nx,   nzp1]
     end
 end
 
@@ -130,10 +129,10 @@ if is_pml_yp
         j_nyp1 = nyp1 - n_pml_yp + jj;  % for nyp1-sized dim-2
         j_ny   = ny   - n_pml_yp + jj;  % for ny-sized dim-2
 
-        eps_r_xy(:,j_nyp1,:) = 1 + sig_e_vec(jj)/(1i*w*eps_0);
-        eps_r_zy(:,j_nyp1,:) = 1 + sig_e_vec(jj)/(1i*w*eps_0);
-        mu_r_xy(:,j_ny,:)    = 1 + sig_m_vec(jj)/(1i*w*mu_0);
-        mu_r_zy(:,j_ny,:)    = 1 + sig_m_vec(jj)/(1i*w*mu_0);
+        eps_r_xy(:,j_nyp1,:) = eps_r_xy(:,j_nyp1,:) .* (1 + sig_e_vec(jj)/(1i*w*eps_0));
+        eps_r_zy(:,j_nyp1,:) = eps_r_zy(:,j_nyp1,:) .* (1 + sig_e_vec(jj)/(1i*w*eps_0));
+        mu_r_xy(:,j_ny,:)    = mu_r_xy(:,j_ny,:)    .* (1 + sig_m_vec(jj)/(1i*w*mu_0));
+        mu_r_zy(:,j_ny,:)    = mu_r_zy(:,j_ny,:)    .* (1 + sig_m_vec(jj)/(1i*w*mu_0));
     end
 end
 
@@ -145,13 +144,13 @@ if is_pml_zn
     sig_m_vec = (mu_0/eps_0) * sig_e_vec;
 
     for kk = 1:n_pml_zn
-        k_nzp1 = kk;                     % eps arrays have nzp1 on dim-3
-        k_nz   = kk;                     % mu arrays  have nz   on dim-3
+        k_nzp1 = kk;                   % eps arrays have nzp1 on dim-3
+        k_nz   = kk;                   % mu arrays  have nz   on dim-3
 
-        eps_r_xz(:,:,k_nzp1) = 1 + sig_e_vec(kk)/(1i*w*eps_0);  % [nx,   nyp1]
-        eps_r_yz(:,:,k_nzp1) = 1 + sig_e_vec(kk)/(1i*w*eps_0);  % [nxp1, ny  ]
-        mu_r_xz(:,:,k_nz)    = 1 + sig_m_vec(kk)/(1i*w*mu_0);   % [nxp1, ny  ]
-        mu_r_yz(:,:,k_nz)    = 1 + sig_m_vec(kk)/(1i*w*mu_0);   % [nx,   nyp1]
+        eps_r_xz(:,:,k_nzp1) = eps_r_xz(:,:,k_nzp1) .* (1 + sig_e_vec(kk)/(1i*w*eps_0)); % [nx,   nyp1]
+        eps_r_yz(:,:,k_nzp1) = eps_r_yz(:,:,k_nzp1) .* (1 + sig_e_vec(kk)/(1i*w*eps_0)); % [nxp1, ny  ]
+        mu_r_xz(:,:,k_nz)    = mu_r_xz(:,:,k_nz)    .* (1 + sig_m_vec(kk)/(1i*w*mu_0));  % [nxp1, ny  ]
+        mu_r_yz(:,:,k_nz)    = mu_r_yz(:,:,k_nz)    .* (1 + sig_m_vec(kk)/(1i*w*mu_0));  % [nx,   nyp1]
     end
 end
 
@@ -166,10 +165,10 @@ if is_pml_zp
         k_nzp1 = nzp1 - n_pml_zp + kk;  % eps arrays dim-3
         k_nz   = nz   - n_pml_zp + kk;  % mu arrays  dim-3
 
-        eps_r_xz(:,:,k_nzp1) = 1 + sig_e_vec(kk)/(1i*w*eps_0);
-        eps_r_yz(:,:,k_nzp1) = 1 + sig_e_vec(kk)/(1i*w*eps_0);
-        mu_r_xz(:,:,k_nz)    = 1 + sig_m_vec(kk)/(1i*w*mu_0);
-        mu_r_yz(:,:,k_nz)    = 1 + sig_m_vec(kk)/(1i*w*mu_0);
+        eps_r_xz(:,:,k_nzp1) = eps_r_xz(:,:,k_nzp1) .* (1 + sig_e_vec(kk)/(1i*w*eps_0));
+        eps_r_yz(:,:,k_nzp1) = eps_r_yz(:,:,k_nzp1) .* (1 + sig_e_vec(kk)/(1i*w*eps_0));
+        mu_r_xz(:,:,k_nz)    = mu_r_xz(:,:,k_nz)    .* (1 + sig_m_vec(kk)/(1i*w*mu_0));
+        mu_r_yz(:,:,k_nz)    = mu_r_yz(:,:,k_nz)    .* (1 + sig_m_vec(kk)/(1i*w*mu_0));
     end
 end
 
