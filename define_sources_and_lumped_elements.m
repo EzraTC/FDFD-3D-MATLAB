@@ -8,6 +8,21 @@ inductors = [];
 capacitors = [];
 ports = [];
 
+% Direction (radians) — user-input:
+theta_inc = 0;           % polar angle from +z
+phi_inc   = pi/4;        % azimuth from +x toward +y
+
+% Polarization in spherical basis:
+E_theta = 1;             % amplitude along \hat{theta}
+E_phi   = 0;             % amplitude along \hat{phi}
+
+% --- Plane-wave (single-frequency) for FDFD ---
+waveforms.plane_wave(1).frequency = frequency_domain.f;   % 5e9 Hz (already set)
+waveforms.plane_wave(1).theta_inc = theta_inc;                    % +z propagation
+waveforms.plane_wave(1).phi_inc   = phi_inc;                 % azimuth (unused when theta=0)
+waveforms.plane_wave(1).E_theta   = E_theta;                    % V/m along \hat{theta}
+waveforms.plane_wave(1).E_phi     = E_phi;                    % V/m along \hat{phi}
+
 % define source waveform types and parameters
 % waveforms.sinusoidal(1).frequency = 1e9; 
 % waveforms.sinusoidal(2).frequency = 5e8; 

@@ -2,14 +2,14 @@
 clear all; close all; clc;
 
 % define the problem 
-define_problem_space_parameters; %Need - Done *mentions  cpml* *fixed for pml*
-define_geometry; %Need - Done
-define_sources_and_lumped_elements; %Need - Done
+define_problem_space_parameters; 
+define_geometry; 
+define_sources_and_lumped_elements; 
 
-define_output_parameters;%Need - Done but needs to have some additions before useage
+define_output_parameters;
 
 % initialize the problem space and parameters 
-initialize_fdfd_material_grid; %Need - Done
+initialize_fdfd_material_grid; 
 display_problem_space; 
 display_material_mesh;
 
@@ -26,6 +26,6 @@ if run_simulation
     solve_matrix_equation;
 
     % display simulation results
-    % post_process_and_display_results;
+    post_process_and_display_results;
     
 end

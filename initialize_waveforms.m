@@ -2,9 +2,6 @@ disp('initializing source waveforms');
 
 % === FDFD: Incident Plane Wave ============================
 
-% Frequency (Hz) - user-input: %Moved to define _problem space parameters
-frequency = 2.4e9;
-
 f = frequency_domain.f; %Moved to define sources andf lumped elements
 
 % Direction (radians) — user-input:
